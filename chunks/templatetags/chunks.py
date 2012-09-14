@@ -30,7 +30,7 @@ class ChunkNode(template.Node):
             cache_key = CACHE_PREFIX + self.key
             c = cache.get(cache_key)
             if c is None:
-                c = Chunk.objects.get(key=self.key)
+                c = Chunk.objects.filter(language=context['request'].LANGUAGE_CODE).get(key=self.key)
                 cache.set(cache_key, c, int(self.cache_time))
             content = c.content
         except Chunk.DoesNotExist:
@@ -53,7 +53,7 @@ class GetChunkNode(template.Node):
 
     def render(self, context):
         try:
-            chunk = Chunk.objects.get(key=self.key)
+            chunk = Chunk.objects.filter(language=context['request'].LANGUAGE_CODE).get(key=self.key)
         except Chunk.DoesNotExist:
             chunk = None
         context[self.varname] = chunk
